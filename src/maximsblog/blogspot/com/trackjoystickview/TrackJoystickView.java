@@ -335,13 +335,13 @@ public class TrackJoystickView extends View implements Runnable {
 	private int getPower1() {
 		int y = yPosition1 - buttonRadius;
 
-		return 100 - y * 200 / (getHeight() - 2 * buttonRadius);
+		return (int) Math.round(100.0 - y * 200.0 / (getHeight() - 2.0 * buttonRadius));
 	}
 
 	private int getPower2() {
 		int y = yPosition2 - buttonRadius;
 
-		return 100 - y * 200 / (getHeight() - 2 * buttonRadius);
+		return (int) Math.round(100.0 - y * 200.0 / (getHeight() - 2.0 * buttonRadius));
 	}
 
 	public void setOnTrackJoystickViewMoveListener(
