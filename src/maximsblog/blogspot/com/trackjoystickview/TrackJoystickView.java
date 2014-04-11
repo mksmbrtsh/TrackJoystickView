@@ -1,20 +1,5 @@
-## TrackJoystickView - Android
+package maximsblog.blogspot.com.trackjoystickview;
 
-Android TrackJoystickView is a Custom View that simulates a two multitouch joysticks for interactive control two motors for Android, 
-as simple aim is allows access values ​​of power tracks of the virtual Joystck movement.
-
-Power range from -100 to 100, a zero is neuntals;
-
-Project base on JoystickView via zerokol:
-https://github.com/zerokol/JoystickView/
-
-Api level > 11
-
-### SHOW THE CODE
-
-From this point you can inflate the TrackJoystickView in your layouts or referencing it in your Activities.
-
-```java
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
