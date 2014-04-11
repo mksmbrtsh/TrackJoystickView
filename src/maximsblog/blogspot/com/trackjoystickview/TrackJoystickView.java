@@ -244,7 +244,6 @@ public class TrackJoystickView extends View implements Runnable {
 			break;
 		case MotionEvent.ACTION_POINTER_DOWN: { // next downs
 			for (int i1 = 0; i1 < event.getPointerCount(); i1++) {
-				// int i1 = event.getActionIndex();
 				int y = (int) event.getY(i1);
 				int x = (int) event.getX(i1);
 
@@ -287,8 +286,7 @@ public class TrackJoystickView extends View implements Runnable {
 		}
 			break;
 		case MotionEvent.ACTION_POINTER_UP: { // next up
-			//for (int i1 = 0; i1 < event.getPointerCount(); i1++) {
-				int i = event.getPointerId(event.getActionIndex());// i1;
+				int i = event.getPointerId(event.getActionIndex());
 				if (leftTrackTouch == event.getPointerId(i)) {
 					yPosition1 = (int) centerY1;
 					leftTrackTouch = -1;
@@ -297,7 +295,6 @@ public class TrackJoystickView extends View implements Runnable {
 					yPosition2 = (int) centerY2;
 					rightTrackTouch = -1;
 				}
-			//}
 			invalidate();
 
 		}
