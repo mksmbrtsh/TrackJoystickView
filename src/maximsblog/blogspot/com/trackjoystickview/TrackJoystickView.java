@@ -14,22 +14,20 @@ public class TrackJoystickView extends View implements Runnable {
 	public final static long DEFAULT_LOOP_INTERVAL = 100; // 100 ms
 	// Variables
 	private OnTrackJoystickViewMoveListener onTrackJoystickViewMoveListener; // Listener
-	private Thread thread = new Thread(this);
-	private long loopInterval = DEFAULT_LOOP_INTERVAL;
-	private int xPosition1 = 0; // Touch x1 track position
-	private int xPosition2 = 0; // Touch x2 track position
-	private int yPosition1 = 0; // Touch y1 track position
-	private int yPosition2 = 0; // Touch y2 track position
-	private double centerX1 = 0; // Center view x1 position
-	private double centerY1 = 0; // Center view y1 position
-	private double centerX2 = 0; // Center view x2 position
-	private double centerY2 = 0; // Center view y2 position
+	private Thread mThread = new Thread(this);
+	private long mLoopInterval = DEFAULT_LOOP_INTERVAL;
+	private int mYPosition1 = 0; // Touch y1 track position
+	private int mYPosition2 = 0; // Touch y2 track position
+	private double mCenterX1 = 0; // Center view x1 position
+	private double mCenterY1 = 0; // Center view y1 position
+	private double mCenterX2 = 0; // Center view x2 position
+	private double mCenterY2 = 0; // Center view y2 position
 	private Paint mButton;
 	private Paint mLine;
-	private int joystickRadius;
-	private int buttonRadius;
-	private int leftTrackTouch = MotionEvent.INVALID_POINTER_ID;
-	private int rightTrackTouch = MotionEvent.INVALID_POINTER_ID;
+	private int mWorkInterval;
+	private int mButtonRadius;
+	private int mLeftTrackTouchPointer = MotionEvent.INVALID_POINTER_ID;
+	private int mRightTrackTouchPointer = MotionEvent.INVALID_POINTER_ID;
 
 	public TrackJoystickView(Context context) {
 		super(context);
@@ -63,18 +61,16 @@ public class TrackJoystickView extends View implements Runnable {
 	@Override
 	protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
 		super.onSizeChanged(xNew, yNew, xOld, yOld);
-		buttonRadius = (int) (yNew / 2 * 0.25);
-		joystickRadius = yNew - 2 * buttonRadius; // (int) (yNew / 2 * 0.75);
+		mButtonRadius = (int) (yNew / 2 * 0.25);
+		mWorkInterval = yNew - 2 * mButtonRadius;
 		// before measure, get the center of view
-		xPosition1 = xNew - 2 * buttonRadius;
-		xPosition2 = xNew * buttonRadius;
-		yPosition1 = (int) yNew / 2;
-		yPosition2 = (int) yNew / 2;
-		centerX1 = getWidth() - 1 * buttonRadius;
-		centerY1 = (getHeight()) / 2;
+		mYPosition1 = (int) yNew / 2;
+		mYPosition2 = (int) yNew / 2;
+		mCenterX1 = getWidth() - 1 * mButtonRadius;
+		mCenterY1 = (getHeight()) / 2;
 
-		centerX2 = 1 * buttonRadius;
-		centerY2 = (getHeight()) / 2;
+		mCenterX2 = 1 * mButtonRadius;
+		mCenterY2 = (getHeight()) / 2;
 
 	}
 
@@ -113,95 +109,95 @@ public class TrackJoystickView extends View implements Runnable {
 
 		canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), p);
 		// buttons
-		canvas.drawCircle((float) centerX1, yPosition1, buttonRadius, mButton);
-		canvas.drawCircle((float) centerX2, yPosition2, buttonRadius, mButton);
+		canvas.drawCircle((float) mCenterX1, mYPosition1, mButtonRadius, mButton);
+		canvas.drawCircle((float) mCenterX2, mYPosition2, mButtonRadius, mButton);
 		// vertical lines
-		canvas.drawLine((float) centerX1,
-				(float) centerY1 + joystickRadius / 2, (float) centerX1,
-				(float) (centerY1 - joystickRadius / 2), mLine);
-		canvas.drawLine((float) centerX2,
-				(float) centerY2 + joystickRadius / 2, (float) centerX2,
-				(float) (centerY2 - joystickRadius / 2), mLine);
+		canvas.drawLine((float) mCenterX1,
+				(float) mCenterY1 + mWorkInterval / 2, (float) mCenterX1,
+				(float) (mCenterY1 - mWorkInterval / 2), mLine);
+		canvas.drawLine((float) mCenterX2,
+				(float) mCenterY2 + mWorkInterval / 2, (float) mCenterX2,
+				(float) (mCenterY2 - mWorkInterval / 2), mLine);
 		// main horisontal lines
 		// neuntral
-		canvas.drawLine((float) (centerX1 - buttonRadius * 0.75),
-				(float) centerY1, (float) (centerX1 + buttonRadius * 0.75),
-				(float) centerY1, mLine);
-		canvas.drawLine((float) (centerX2 - buttonRadius * 0.75),
-				(float) centerY2, (float) (centerX2 + buttonRadius * 0.75),
-				(float) centerY2, mLine);
+		canvas.drawLine((float) (mCenterX1 - mButtonRadius * 0.75),
+				(float) mCenterY1, (float) (mCenterX1 + mButtonRadius * 0.75),
+				(float) mCenterY1, mLine);
+		canvas.drawLine((float) (mCenterX2 - mButtonRadius * 0.75),
+				(float) mCenterY2, (float) (mCenterX2 + mButtonRadius * 0.75),
+				(float) mCenterY2, mLine);
 		// low
-		canvas.drawLine((float) (centerX1 - buttonRadius * 0.6),
-				(float) centerY1 + joystickRadius / 2,
-				(float) (centerX1 + buttonRadius * 0.6), (float) centerY1
-						+ joystickRadius / 2, mLine);
-		canvas.drawLine((float) (centerX2 - buttonRadius * 0.6),
-				(float) centerY2 + joystickRadius / 2,
-				(float) (centerX2 + buttonRadius * 0.6), (float) centerY2
-						+ joystickRadius / 2, mLine);
+		canvas.drawLine((float) (mCenterX1 - mButtonRadius * 0.6),
+				(float) mCenterY1 + mWorkInterval / 2,
+				(float) (mCenterX1 + mButtonRadius * 0.6), (float) mCenterY1
+						+ mWorkInterval / 2, mLine);
+		canvas.drawLine((float) (mCenterX2 - mButtonRadius * 0.6),
+				(float) mCenterY2 + mWorkInterval / 2,
+				(float) (mCenterX2 + mButtonRadius * 0.6), (float) mCenterY2
+						+ mWorkInterval / 2, mLine);
 		// high
-		canvas.drawLine((float) (centerX1 - buttonRadius * 0.6),
-				(float) centerY1 - joystickRadius / 2,
-				(float) (centerX1 + buttonRadius * 0.6), (float) centerY1
-						- joystickRadius / 2, mLine);
-		canvas.drawLine((float) (centerX2 - buttonRadius * 0.6),
-				(float) centerY2 - joystickRadius / 2,
-				(float) (centerX2 + buttonRadius * 0.6), (float) centerY2
-						- joystickRadius / 2, mLine);
+		canvas.drawLine((float) (mCenterX1 - mButtonRadius * 0.6),
+				(float) mCenterY1 - mWorkInterval / 2,
+				(float) (mCenterX1 + mButtonRadius * 0.6), (float) mCenterY1
+						- mWorkInterval / 2, mLine);
+		canvas.drawLine((float) (mCenterX2 - mButtonRadius * 0.6),
+				(float) mCenterY2 - mWorkInterval / 2,
+				(float) (mCenterX2 + mButtonRadius * 0.6), (float) mCenterY2
+						- mWorkInterval / 2, mLine);
 		// second horisontal lines
-		canvas.drawLine((float) (centerX1 - 0.4 * buttonRadius),
-				(float) (centerY1 + (joystickRadius) / 4),
-				(float) (centerX1 + 0.4 * buttonRadius),
-				(float) (centerY1 + (joystickRadius) / 4), mLine);
-		canvas.drawLine((float) (centerX2 - 0.4 * buttonRadius),
-				(float) (centerY2 + (joystickRadius) / 4),
-				(float) (centerX2 + 0.4 * buttonRadius),
-				(float) (centerY2 + (joystickRadius) / 4), mLine);
+		canvas.drawLine((float) (mCenterX1 - 0.4 * mButtonRadius),
+				(float) (mCenterY1 + (mWorkInterval) / 4),
+				(float) (mCenterX1 + 0.4 * mButtonRadius),
+				(float) (mCenterY1 + (mWorkInterval) / 4), mLine);
+		canvas.drawLine((float) (mCenterX2 - 0.4 * mButtonRadius),
+				(float) (mCenterY2 + (mWorkInterval) / 4),
+				(float) (mCenterX2 + 0.4 * mButtonRadius),
+				(float) (mCenterY2 + (mWorkInterval) / 4), mLine);
 
-		canvas.drawLine((float) (centerX1 - 0.4 * buttonRadius),
-				(float) (centerY1 - (joystickRadius) / 4),
-				(float) (centerX1 + 0.4 * buttonRadius),
-				(float) (centerY1 - (joystickRadius) / 4), mLine);
-		canvas.drawLine((float) (centerX2 - 0.4 * buttonRadius),
-				(float) (centerY2 - (joystickRadius) / 4),
-				(float) (centerX2 + 0.4 * buttonRadius),
-				(float) (centerY2 - (joystickRadius) / 4), mLine);
+		canvas.drawLine((float) (mCenterX1 - 0.4 * mButtonRadius),
+				(float) (mCenterY1 - (mWorkInterval) / 4),
+				(float) (mCenterX1 + 0.4 * mButtonRadius),
+				(float) (mCenterY1 - (mWorkInterval) / 4), mLine);
+		canvas.drawLine((float) (mCenterX2 - 0.4 * mButtonRadius),
+				(float) (mCenterY2 - (mWorkInterval) / 4),
+				(float) (mCenterX2 + 0.4 * mButtonRadius),
+				(float) (mCenterY2 - (mWorkInterval) / 4), mLine);
 		//
-		canvas.drawLine((float) (centerX1 - 0.4 * buttonRadius),
-				(float) (centerY1 - (joystickRadius) / 8),
-				(float) (centerX1 + 0.4 * buttonRadius),
-				(float) (centerY1 - (joystickRadius) / 8), mLine);
-		canvas.drawLine((float) (centerX2 - 0.4 * buttonRadius),
-				(float) (centerY2 - (joystickRadius) / 8),
-				(float) (centerX2 + 0.4 * buttonRadius),
-				(float) (centerY2 - (joystickRadius) / 8), mLine);
+		canvas.drawLine((float) (mCenterX1 - 0.4 * mButtonRadius),
+				(float) (mCenterY1 - (mWorkInterval) / 8),
+				(float) (mCenterX1 + 0.4 * mButtonRadius),
+				(float) (mCenterY1 - (mWorkInterval) / 8), mLine);
+		canvas.drawLine((float) (mCenterX2 - 0.4 * mButtonRadius),
+				(float) (mCenterY2 - (mWorkInterval) / 8),
+				(float) (mCenterX2 + 0.4 * mButtonRadius),
+				(float) (mCenterY2 - (mWorkInterval) / 8), mLine);
 
-		canvas.drawLine((float) (centerX1 - 0.4 * buttonRadius),
-				(float) (centerY1 - 3 * (joystickRadius) / 8),
-				(float) (centerX1 + 0.4 * buttonRadius),
-				(float) (centerY1 - 3 * (joystickRadius) / 8), mLine);
-		canvas.drawLine((float) (centerX2 - 0.4 * buttonRadius),
-				(float) (centerY2 - 3 * (joystickRadius) / 8),
-				(float) (centerX2 + 0.4 * buttonRadius),
-				(float) (centerY2 - 3 * (joystickRadius) / 8), mLine);
+		canvas.drawLine((float) (mCenterX1 - 0.4 * mButtonRadius),
+				(float) (mCenterY1 - 3 * (mWorkInterval) / 8),
+				(float) (mCenterX1 + 0.4 * mButtonRadius),
+				(float) (mCenterY1 - 3 * (mWorkInterval) / 8), mLine);
+		canvas.drawLine((float) (mCenterX2 - 0.4 * mButtonRadius),
+				(float) (mCenterY2 - 3 * (mWorkInterval) / 8),
+				(float) (mCenterX2 + 0.4 * mButtonRadius),
+				(float) (mCenterY2 - 3 * (mWorkInterval) / 8), mLine);
 		//
-		canvas.drawLine((float) (centerX1 - 0.4 * buttonRadius),
-				(float) (centerY1 + (joystickRadius) / 8),
-				(float) (centerX1 + 0.4 * buttonRadius),
-				(float) (centerY1 + (joystickRadius) / 8), mLine);
-		canvas.drawLine((float) (centerX2 - 0.4 * buttonRadius),
-				(float) (centerY2 + (joystickRadius) / 8),
-				(float) (centerX2 + 0.4 * buttonRadius),
-				(float) (centerY2 + (joystickRadius) / 8), mLine);
+		canvas.drawLine((float) (mCenterX1 - 0.4 * mButtonRadius),
+				(float) (mCenterY1 + (mWorkInterval) / 8),
+				(float) (mCenterX1 + 0.4 * mButtonRadius),
+				(float) (mCenterY1 + (mWorkInterval) / 8), mLine);
+		canvas.drawLine((float) (mCenterX2 - 0.4 * mButtonRadius),
+				(float) (mCenterY2 + (mWorkInterval) / 8),
+				(float) (mCenterX2 + 0.4 * mButtonRadius),
+				(float) (mCenterY2 + (mWorkInterval) / 8), mLine);
 
-		canvas.drawLine((float) (centerX1 - 0.4 * buttonRadius),
-				(float) (centerY1 + 3 * (joystickRadius) / 8),
-				(float) (centerX1 + 0.4 * buttonRadius),
-				(float) (centerY1 + 3 * (joystickRadius) / 8), mLine);
-		canvas.drawLine((float) (centerX2 - 0.4 * buttonRadius),
-				(float) (centerY2 + 3 * (joystickRadius) / 8),
-				(float) (centerX2 + 0.4 * buttonRadius),
-				(float) (centerY2 + 3 * (joystickRadius) / 8), mLine);
+		canvas.drawLine((float) (mCenterX1 - 0.4 * mButtonRadius),
+				(float) (mCenterY1 + 3 * (mWorkInterval) / 8),
+				(float) (mCenterX1 + 0.4 * mButtonRadius),
+				(float) (mCenterY1 + 3 * (mWorkInterval) / 8), mLine);
+		canvas.drawLine((float) (mCenterX2 - 0.4 * mButtonRadius),
+				(float) (mCenterY2 + 3 * (mWorkInterval) / 8),
+				(float) (mCenterX2 + 0.4 * mButtonRadius),
+				(float) (mCenterY2 + 3 * (mWorkInterval) / 8), mLine);
 
 	}
 
@@ -215,31 +211,31 @@ public class TrackJoystickView extends View implements Runnable {
 			int i1 = event.getActionIndex();
 			int y = (int) event.getY(i1);
 			int x = (int) event.getX(i1);
-			double abs1 = Math.sqrt((x - centerX1) * (x - centerX1)
-					+ (y - centerY1) * (y - centerY1));
-			double abs2 = Math.sqrt((x - centerX2) * (x - centerX2)
-					+ (y - centerY2) * (y - centerY2));
+			double abs1 = Math.sqrt((x - mCenterX1) * (x - mCenterX1)
+					+ (y - mCenterY1) * (y - mCenterY1));
+			double abs2 = Math.sqrt((x - mCenterX2) * (x - mCenterX2)
+					+ (y - mCenterY2) * (y - mCenterY2));
 			if (abs1 < abs2) {
-				yPosition1 = y;
-				leftTrackTouch = event.getPointerId(i1);
-				if (abs1 > joystickRadius / 2) {
-					yPosition1 = (int) ((yPosition1 - centerY1)
-							* joystickRadius / 2 / abs1 + centerY1);
+				mYPosition1 = y;
+				mLeftTrackTouchPointer = event.getPointerId(i1);
+				if (abs1 > mWorkInterval / 2) {
+					mYPosition1 = (int) ((mYPosition1 - mCenterY1)
+							* mWorkInterval / 2 / abs1 + mCenterY1);
 				}
 			} else {
-				yPosition2 = y;
-				rightTrackTouch = event.getPointerId(i1);
-				if (abs2 > joystickRadius / 2) {
-					yPosition2 = (int) ((yPosition2 - centerY2)
-							* joystickRadius / 2 / abs2 + centerY2);
+				mYPosition2 = y;
+				mRightTrackTouchPointer = event.getPointerId(i1);
+				if (abs2 > mWorkInterval / 2) {
+					mYPosition2 = (int) ((mYPosition2 - mCenterY2)
+							* mWorkInterval / 2 / abs2 + mCenterY2);
 				}
 			}
 			invalidate();
-			if (thread != null && thread.isAlive()) {
-				thread.interrupt();
+			if (mThread != null && mThread.isAlive()) {
+				mThread.interrupt();
 			}
-			thread = new Thread(this);
-			thread.start();
+			mThread = new Thread(this);
+			mThread.start();
 		}
 			break;
 		case MotionEvent.ACTION_POINTER_DOWN: { // next downs
@@ -247,27 +243,27 @@ public class TrackJoystickView extends View implements Runnable {
 				int y = (int) event.getY(i1);
 				int x = (int) event.getX(i1);
 
-				if (leftTrackTouch == MotionEvent.INVALID_POINTER_ID && rightTrackTouch != event.getPointerId(i1)) {
-					leftTrackTouch = event.getPointerId(i1);
-				} else if (rightTrackTouch ==  MotionEvent.INVALID_POINTER_ID && leftTrackTouch != event.getPointerId(i1)) {
-					rightTrackTouch = event.getPointerId(i1);
+				if (mLeftTrackTouchPointer == MotionEvent.INVALID_POINTER_ID && mRightTrackTouchPointer != event.getPointerId(i1)) {
+					mLeftTrackTouchPointer = event.getPointerId(i1);
+				} else if (mRightTrackTouchPointer ==  MotionEvent.INVALID_POINTER_ID && mLeftTrackTouchPointer != event.getPointerId(i1)) {
+					mRightTrackTouchPointer = event.getPointerId(i1);
 				}
 
-				if (leftTrackTouch == event.getPointerId(i1)) {
-					double abs1 = Math.sqrt((x - centerX1) * (x - centerX1)
-							+ (y - centerY1) * (y - centerY1));
-					yPosition1 = y;
-					if (abs1 > joystickRadius / 2) {
-						yPosition1 = (int) ((yPosition1 - centerY1)
-								* joystickRadius / 2 / abs1 + centerY1);
+				if (mLeftTrackTouchPointer == event.getPointerId(i1)) {
+					double abs1 = Math.sqrt((x - mCenterX1) * (x - mCenterX1)
+							+ (y - mCenterY1) * (y - mCenterY1));
+					mYPosition1 = y;
+					if (abs1 > mWorkInterval / 2) {
+						mYPosition1 = (int) ((mYPosition1 - mCenterY1)
+								* mWorkInterval / 2 / abs1 + mCenterY1);
 					}
-				} else if (rightTrackTouch == event.getPointerId(i1)) {
-					double abs2 = Math.sqrt((x - centerX2) * (x - centerX2)
-							+ (y - centerY2) * (y - centerY2));
-					yPosition2 = y;
-					if (abs2 > joystickRadius / 2) {
-						yPosition2 = (int) ((yPosition2 - centerY2)
-								* joystickRadius / 2 / abs2 + centerY2);
+				} else if (mRightTrackTouchPointer == event.getPointerId(i1)) {
+					double abs2 = Math.sqrt((x - mCenterX2) * (x - mCenterX2)
+							+ (y - mCenterY2) * (y - mCenterY2));
+					mYPosition2 = y;
+					if (abs2 > mWorkInterval / 2) {
+						mYPosition2 = (int) ((mYPosition2 - mCenterY2)
+								* mWorkInterval / 2 / abs2 + mCenterY2);
 					}
 				}
 			}
@@ -275,25 +271,25 @@ public class TrackJoystickView extends View implements Runnable {
 		}
 			break;
 		case MotionEvent.ACTION_UP: { // last up
-			yPosition1 = (int) centerY1;
-			yPosition2 = (int) centerY2;
-			rightTrackTouch =  MotionEvent.INVALID_POINTER_ID;
-			leftTrackTouch =  MotionEvent.INVALID_POINTER_ID;
+			mYPosition1 = (int) mCenterY1;
+			mYPosition2 = (int) mCenterY2;
+			mRightTrackTouchPointer =  MotionEvent.INVALID_POINTER_ID;
+			mLeftTrackTouchPointer =  MotionEvent.INVALID_POINTER_ID;
 			invalidate();
-			thread.interrupt();
+			mThread.interrupt();
 			onTrackJoystickViewMoveListener.onValueChanged(getPower2(),
 					getPower1());
 		}
 			break;
 		case MotionEvent.ACTION_POINTER_UP: { // next up
 				int i = event.getPointerId(event.getActionIndex());
-				if (leftTrackTouch == event.getPointerId(i)) {
-					yPosition1 = (int) centerY1;
-					leftTrackTouch =  MotionEvent.INVALID_POINTER_ID;
+				if (mLeftTrackTouchPointer == i) {
+					mYPosition1 = (int) mCenterY1;
+					mLeftTrackTouchPointer =  MotionEvent.INVALID_POINTER_ID;
 
-				} else if (rightTrackTouch == event.getPointerId(i)) {
-					yPosition2 = (int) centerY2;
-					rightTrackTouch =  MotionEvent.INVALID_POINTER_ID;
+				} else if (mRightTrackTouchPointer == i) {
+					mYPosition2 = (int) mCenterY2;
+					mRightTrackTouchPointer =  MotionEvent.INVALID_POINTER_ID;
 				}
 			invalidate();
 
@@ -304,21 +300,21 @@ public class TrackJoystickView extends View implements Runnable {
 			for (int i1 = 0; i1 < event.getPointerCount(); i1++) {
 				int y = (int) event.getY(i1);
 				int x = (int) event.getX(i1);
-				if (leftTrackTouch == event.getPointerId(i1)) {
-					double abs1 = Math.sqrt((x - centerX1) * (x - centerX1)
-							+ (y - centerY1) * (y - centerY1));
-					yPosition1 = y;
-					if (abs1 > joystickRadius / 2) {
-						yPosition1 = (int) ((yPosition1 - centerY1)
-								* joystickRadius / abs1 / 2 + centerY1);
+				if (mLeftTrackTouchPointer == event.getPointerId(i1)) {
+					double abs1 = Math.sqrt((x - mCenterX1) * (x - mCenterX1)
+							+ (y - mCenterY1) * (y - mCenterY1));
+					mYPosition1 = y;
+					if (abs1 > mWorkInterval / 2) {
+						mYPosition1 = (int) ((mYPosition1 - mCenterY1)
+								* mWorkInterval / abs1 / 2 + mCenterY1);
 					}
-				} else if (rightTrackTouch == event.getPointerId(i1)) {
-					double abs2 = Math.sqrt((x - centerX2) * (x - centerX2)
-							+ (y - centerY2) * (y - centerY2));
-					yPosition2 = y;
-					if (abs2 > joystickRadius / 2) {
-						yPosition2 = (int) ((yPosition2 - centerY2)
-								* joystickRadius / abs2 / 2 + centerY2);
+				} else if (mRightTrackTouchPointer == event.getPointerId(i1)) {
+					double abs2 = Math.sqrt((x - mCenterX2) * (x - mCenterX2)
+							+ (y - mCenterY2) * (y - mCenterY2));
+					mYPosition2 = y;
+					if (abs2 > mWorkInterval / 2) {
+						mYPosition2 = (int) ((mYPosition2 - mCenterY2)
+								* mWorkInterval / abs2 / 2 + mCenterY2);
 					}
 				}
 			}
@@ -330,21 +326,21 @@ public class TrackJoystickView extends View implements Runnable {
 	}
 
 	private int getPower1() {
-		int y = yPosition1 - buttonRadius;
+		int y = mYPosition1 - mButtonRadius;
 
-		return (int) Math.round(100.0 - y * 200.0 / (getHeight() - 2.0 * buttonRadius));
+		return (int) Math.round(100.0 - y * 200.0 / (getHeight() - 2.0 * mButtonRadius));
 	}
 
 	private int getPower2() {
-		int y = yPosition2 - buttonRadius;
+		int y = mYPosition2 - mButtonRadius;
 
-		return (int)Math.round(100.0 - y * 200.0 / (getHeight() - 2.0 * buttonRadius));
+		return (int)Math.round(100.0 - y * 200.0 / (getHeight() - 2.0 * mButtonRadius));
 	}
 
 	public void setOnTrackJoystickViewMoveListener(
 			OnTrackJoystickViewMoveListener listener, long repeatInterval) {
 		this.onTrackJoystickViewMoveListener = listener;
-		this.loopInterval = repeatInterval;
+		this.mLoopInterval = repeatInterval;
 	}
 
 	public static interface OnTrackJoystickViewMoveListener {
@@ -361,7 +357,7 @@ public class TrackJoystickView extends View implements Runnable {
 				}
 			});
 			try {
-				Thread.sleep(loopInterval);
+				Thread.sleep(mLoopInterval);
 			} catch (InterruptedException e) {
 				break;
 			}
