@@ -26,7 +26,7 @@ TrackJoystickView joystick = (TrackJoystickView) findViewById(R.id.trackjoystick
 						status.setText("L:" + String.valueOf(y1) +" R:" + String.valueOf(y2));
 					}
 				}, TrackJoystickView.DEFAULT_LOOP_INTERVAL);
-
+```
 ### SHOW THE CODE
 
 From this point you can inflate the TrackJoystickView in your layouts or referencing it in your Activities.
@@ -37,6 +37,7 @@ From this point you can inflate the TrackJoystickView in your layouts or referen
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
+```
 
 ```java
 package maximsblog.blogspot.com.trackjoystickview;
