@@ -12,13 +12,34 @@ https://github.com/zerokol/JoystickView/
 Api level > 11
 Tested on nexus4, acer A501, LG L9
 
+### HOW TO USAGE
+
+Add TrackJoystickView.class to your project.
+Add maximsblog.blogspot.com.trackjoystickview.TrackJoystickView to your layout.
+Add setOnTrackJoystickViewMoveListener.
+```java
+TrackJoystickView joystick = (TrackJoystickView) findViewById(R.id.trackjoystickView);
+		joystick.setOnTrackJoystickViewMoveListener(
+				new OnTrackJoystickViewMoveListener() {
+					@Override
+					public void onValueChanged(int y1, int y2) {
+						status.setText("L:" + String.valueOf(y1) +" R:" + String.valueOf(y2));
+					}
+				}, TrackJoystickView.DEFAULT_LOOP_INTERVAL);
+
 ### SHOW THE CODE
 
 From this point you can inflate the TrackJoystickView in your layouts or referencing it in your Activities.
 
+```xml
+<maximsblog.blogspot.com.trackjoystickview.TrackJoystickView
+        android:id="@+id/trackjoystickView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 ```java
 package maximsblog.blogspot.com.trackjoystickview;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -47,6 +68,7 @@ public class TrackJoystickView extends View implements Runnable {
 	private int mButtonRadius;
 	private int mLeftTrackTouchPointer = MotionEvent.INVALID_POINTER_ID;
 	private int mRightTrackTouchPointer = MotionEvent.INVALID_POINTER_ID;
+	private Paint mBackground;
 
 	public TrackJoystickView(Context context) {
 		super(context);
@@ -71,6 +93,9 @@ public class TrackJoystickView extends View implements Runnable {
 		mButton = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mButton.setColor(Color.DKGRAY);
 		mButton.setStyle(Paint.Style.FILL);
+		
+		mBackground = new Paint();
+		mBackground.setColor(Color.CYAN);
 	}
 
 	@Override
@@ -123,10 +148,7 @@ public class TrackJoystickView extends View implements Runnable {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		Paint p = new Paint();
-		p.setColor(Color.CYAN);
-
-		canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), p);
+		canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), mBackground);
 		// buttons
 		canvas.drawCircle((float) mCenterX1, mYPosition1, mButtonRadius, mButton);
 		canvas.drawCircle((float) mCenterX2, mYPosition2, mButtonRadius, mButton);

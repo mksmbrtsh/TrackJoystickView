@@ -28,6 +28,7 @@ public class TrackJoystickView extends View implements Runnable {
 	private int mButtonRadius;
 	private int mLeftTrackTouchPointer = MotionEvent.INVALID_POINTER_ID;
 	private int mRightTrackTouchPointer = MotionEvent.INVALID_POINTER_ID;
+	private Paint mBackground;
 
 	public TrackJoystickView(Context context) {
 		super(context);
@@ -52,6 +53,9 @@ public class TrackJoystickView extends View implements Runnable {
 		mButton = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mButton.setColor(Color.DKGRAY);
 		mButton.setStyle(Paint.Style.FILL);
+		
+		mBackground = new Paint();
+		mBackground.setColor(Color.CYAN);
 	}
 
 	@Override
@@ -104,10 +108,7 @@ public class TrackJoystickView extends View implements Runnable {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		Paint p = new Paint();
-		p.setColor(Color.CYAN);
-
-		canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), p);
+		canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), mBackground);
 		// buttons
 		canvas.drawCircle((float) mCenterX1, mYPosition1, mButtonRadius, mButton);
 		canvas.drawCircle((float) mCenterX2, mYPosition2, mButtonRadius, mButton);
