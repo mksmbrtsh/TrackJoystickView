@@ -10,6 +10,7 @@ Project base on JoystickView via zerokol:
 https://github.com/zerokol/JoystickView/
 
 Api level > 11
+Tested on nexus4, acer A501, LG L9
 
 ### SHOW THE CODE
 
@@ -17,6 +18,7 @@ From this point you can inflate the TrackJoystickView in your layouts or referen
 
 ```java
 package maximsblog.blogspot.com.trackjoystickview;
+
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -46,8 +48,8 @@ public class TrackJoystickView extends View implements Runnable {
 	private Paint mLine;
 	private int joystickRadius;
 	private int buttonRadius;
-	private int leftTrackTouch;
-	private int rightTrackTouch;
+	private int leftTrackTouch = MotionEvent.INVALID_POINTER_ID;
+	private int rightTrackTouch = MotionEvent.INVALID_POINTER_ID;
 
 	public TrackJoystickView(Context context) {
 		super(context);
@@ -265,9 +267,9 @@ public class TrackJoystickView extends View implements Runnable {
 				int y = (int) event.getY(i1);
 				int x = (int) event.getX(i1);
 
-				if (leftTrackTouch == -1 && rightTrackTouch != event.getPointerId(i1)) {
+				if (leftTrackTouch == MotionEvent.INVALID_POINTER_ID && rightTrackTouch != event.getPointerId(i1)) {
 					leftTrackTouch = event.getPointerId(i1);
-				} else if (rightTrackTouch == -1 && leftTrackTouch != event.getPointerId(i1)) {
+				} else if (rightTrackTouch ==  MotionEvent.INVALID_POINTER_ID && leftTrackTouch != event.getPointerId(i1)) {
 					rightTrackTouch = event.getPointerId(i1);
 				}
 
@@ -295,8 +297,8 @@ public class TrackJoystickView extends View implements Runnable {
 		case MotionEvent.ACTION_UP: { // last up
 			yPosition1 = (int) centerY1;
 			yPosition2 = (int) centerY2;
-			rightTrackTouch = -1;
-			leftTrackTouch = -1;
+			rightTrackTouch =  MotionEvent.INVALID_POINTER_ID;
+			leftTrackTouch =  MotionEvent.INVALID_POINTER_ID;
 			invalidate();
 			thread.interrupt();
 			onTrackJoystickViewMoveListener.onValueChanged(getPower2(),
@@ -307,11 +309,11 @@ public class TrackJoystickView extends View implements Runnable {
 				int i = event.getPointerId(event.getActionIndex());
 				if (leftTrackTouch == event.getPointerId(i)) {
 					yPosition1 = (int) centerY1;
-					leftTrackTouch = -1;
+					leftTrackTouch =  MotionEvent.INVALID_POINTER_ID;
 
 				} else if (rightTrackTouch == event.getPointerId(i)) {
 					yPosition2 = (int) centerY2;
-					rightTrackTouch = -1;
+					rightTrackTouch =  MotionEvent.INVALID_POINTER_ID;
 				}
 			invalidate();
 
